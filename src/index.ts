@@ -43,15 +43,6 @@ app.post('/signin', (req, res) => {
     let user = verify(req.get('Authorization'))
     res.send(`Hello ${user}`)
 });
-/*app.all('/', (req, res) => {
-    console.log(`All ${req}`);
-    res.send(`Yay`);
-})
-app.get('/', (req, res) => {
-  console.log(`Got ${req}`);
-  res.send(`Thanks!`);
-});
-*/
 
 if (!CLIENT_ID) {
   console.log('You must set $CLIENT_ID or the application will not work.');
