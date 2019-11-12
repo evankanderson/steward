@@ -16,10 +16,10 @@ const client = new OAuth2Client(CLIENT_ID);
  *
  * @param userToken The user's JWT.
  */
-async function verify(userToken: string): Promise<string | null> {
+async function verify(userToken: string | undefined): Promise<string | null> {
   try {
     const ticket = await client.verifyIdToken({
-      idToken: userToken,
+      idToken: userToken || "",
       audience: CLIENT_ID,
     });
     const payload = ticket.getPayload();
@@ -33,12 +33,15 @@ async function verify(userToken: string): Promise<string | null> {
   }
 }
 
-
-
 app.get('/', (req, res) => {
   res.render('main', { CLIENT_ID: CLIENT_ID });
-  // res.sendFile(path.join(process.cwd(), 'static', 'main.html'));
-  console.log(`Currently in ${process.cwd()}`);
+});
+app.get('/wheel.jpg', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'static', 'wheel.jpg'));
+});
+app.post('/signin', (req, res) => {
+    let user = verify(req.get('Authorization'))
+    res.send(`Hello ${user}`)
 });
 /*app.all('/', (req, res) => {
     console.log(`All ${req}`);
@@ -51,8 +54,8 @@ app.get('/', (req, res) => {
 */
 
 if (!CLIENT_ID) {
-    console.log("You must set $CLIENT_ID or the application will not work.");
-    process.exit(1);
+  console.log('You must set $CLIENT_ID or the application will not work.');
+  process.exit(1);
 }
 
 app.listen(PORT, () => {

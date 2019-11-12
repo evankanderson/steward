@@ -21,7 +21,7 @@ const client = new google_auth_library_1.OAuth2Client(CLIENT_ID);
 async function verify(userToken) {
     try {
         const ticket = await client.verifyIdToken({
-            idToken: userToken,
+            idToken: userToken || "",
             audience: CLIENT_ID,
         });
         const payload = ticket.getPayload();
@@ -37,8 +37,13 @@ async function verify(userToken) {
 }
 app.get('/', (req, res) => {
     res.render('main', { CLIENT_ID: CLIENT_ID });
-    // res.sendFile(path.join(process.cwd(), 'static', 'main.html'));
-    console.log(`Currently in ${process.cwd()}`);
+});
+app.get('/wheel.jpg', (req, res) => {
+    res.sendFile(path_1.default.join(process.cwd(), 'static', 'wheel.jpg'));
+});
+app.post('/signin', (req, res) => {
+    let user = verify(req.get('Authorization'));
+    res.send(`Hello ${user}`);
 });
 /*app.all('/', (req, res) => {
     console.log(`All ${req}`);
@@ -50,7 +55,7 @@ app.get('/', (req, res) => {
 });
 */
 if (!CLIENT_ID) {
-    console.log("You must set $CLIENT_ID or the application will not work.");
+    console.log('You must set $CLIENT_ID or the application will not work.');
     process.exit(1);
 }
 app.listen(PORT, () => {
