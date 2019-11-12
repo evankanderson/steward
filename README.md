@@ -1,4 +1,4 @@
-# steward
+# Steward
 
 Kubernetes shared cluster provisioning for knative
 
