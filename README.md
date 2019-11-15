@@ -72,92 +72,88 @@ get the OAuth to work elsewhere), and then do the following:
    resources:
 
    ```yaml
-   apiVersion: v1
-   items:
-     - apiVersion: rbac.authorization.k8s.io/v1
-       kind: ClusterRole
-       metadata:
-         name: provision
-       rules:
-         - apiGroups:
-             - ''
-           resources:
-             - namespaces
-             - resourcequotas
-             - limitranges
-           verbs:
-             - '*'
-         - apiGroups:
-             - rbac.authorization.k8s.io
-           resources:
-             - rolebindings
-           verbs:
-             - '*'
-         - apiGroups:
-             - rbac.authorization.k8s.io
-           resourceNames:
-             - workshop-user
-           resources:
-             - clusterroles
-           verbs:
-             - bind
-     - apiVersion: rbac.authorization.k8s.io/v1
-       kind: ClusterRole
-       metadata:
-         name: workshop-user
-       rules:
-         - apiGroups:
-             - serving.knative.dev
-           resources:
-             - services
-           verbs:
-             - '*'
-         - apiGroups:
-             - serving.knative.dev
-           resources:
-             - '*'
-           verbs:
-             - get
-             - list
-             - watch
-         - apiGroups:
-             - ''
-           resources:
-             - configmaps
-           verbs:
-             - '*'
-         - apiGroups:
-             - ''
-           resources:
-             - pods
-           verbs:
-             - get
-             - list
-             - watch
-             - delete
-         - apiGroups:
-             - eventing.knative.dev
-           resources:
-             - trigger
-           verbs:
-             - '*'
-     - apiVersion: rbac.authorization.k8s.io/v1
-       kind: ClusterRole
-       metadata:
-         name: event-viewer
-       rules:
-         - apiGroups:
-             - ''
-           resources:
-             - events
-           verbs:
-             - get
-             - watch
-             - list
-   kind: List
+   apiVersion: rbac.authorization.k8s.io/v1
+   kind: ClusterRole
    metadata:
-     resourceVersion: ''
-     selfLink: ''
+     name: provision
+   rules:
+     - apiGroups:
+         - ''
+       resources:
+         - namespaces
+         - resourcequotas
+         - limitranges
+       verbs:
+         - '*'
+     - apiGroups:
+         - rbac.authorization.k8s.io
+       resources:
+         - rolebindings
+       verbs:
+         - '*'
+     - apiGroups:
+         - rbac.authorization.k8s.io
+       resourceNames:
+         - workshop-user
+       resources:
+         - clusterroles
+       verbs:
+         - bind
+   ---
+   apiVersion: rbac.authorization.k8s.io/v1
+   kind: ClusterRole
+   metadata:
+     name: workshop-user
+   rules:
+     - apiGroups:
+         - serving.knative.dev
+       resources:
+         - services
+       verbs:
+         - '*'
+     - apiGroups:
+         - serving.knative.dev
+       resources:
+         - '*'
+       verbs:
+         - get
+         - list
+         - watch
+     - apiGroups:
+         - ''
+       resources:
+         - configmaps
+       verbs:
+         - '*'
+     - apiGroups:
+         - ''
+       resources:
+         - pods
+       verbs:
+         - get
+         - list
+         - watch
+         - delete
+     - apiGroups:
+         - eventing.knative.dev
+       resources:
+         - trigger
+       verbs:
+         - '*'
+   ---
+   apiVersion: rbac.authorization.k8s.io/v1
+   kind: ClusterRole
+   metadata:
+     name: event-viewer
+   rules:
+     - apiGroups:
+         - ''
+       resources:
+         - events
+       verbs:
+         - get
+         - watch
+         - list
    ```
 
 1. Create the following ClusterRoleBinding for launching Steward as the
@@ -256,7 +252,8 @@ get the OAuth to work elsewhere), and then do the following:
    ```
 
    Note that you'll also need to update the default Kibana installation to
-   change the `SERVER_BASEPATH` environment variable in the Deployment.
+   change the `SERVER_BASEPATH` environment variable in the Deployment to
+   `/logging` (no trailing "/").
 
 ## End result
 
