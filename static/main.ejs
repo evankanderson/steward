@@ -32,35 +32,42 @@
             data-theme="dark"
           ></div>
           <script>
-            function renderData(clusterInfo) {
-              let div = Document.getElementById('cluster-info');
-              let pre = div.getElementbyTagName('pre')[0];
-              pre.textContent = clusterInfo;
+            async function renderData(httpResponse) {
+              let clusterInfo = await httpResponse.json();
+
+              // Fill in cluster info
+              let div = document.getElementById('cluster-info');
+              div.style.display = 'block';
+              if (clusterInfo['message']) {
+                document.getElementById('server-message').innerText = clusterInfo['message'];
+              }
+              if (clusterInfo['namespace']){
+                document.getElementById('namespace').innerText = clusterInfo['namespace'];
+              }
+              if (clusterInfo['config']) {
+                let pre = div.getElementsByTagName('pre')[0];
+                pre.innerText = clusterInfo['config'];
+              }
             }
 
             function onSignIn(googleUser) {
-              // Useful data for your client-side scripts:
-              let profile = googleUser.getBasicProfile();
-              console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-              console.log('Full Name: ' + profile.getName());
-              console.log('Given Name: ' + profile.getGivenName());
-              console.log('Family Name: ' + profile.getFamilyName());
-              console.log("Image URL: " + profile.getImageUrl());
-              console.log("Email: " + profile.getEmail());
-
-              // The ID token you need to pass to your backend:
-              let id_token = googleUser.getAuthResponse().id_token;
-              console.log("ID Token: " + id_token);
+              let idToken = googleUser.getAuthResponse().id_token;
               fetch("/signin", {
-                headers: {"Authorization", id_token},
+                headers: {"Authorization": idToken},
                 method: "POST",
               })
               .then(renderData);
             }
           </script>
 
-          <div id="cluster-info">
-            <pre></pre>
+          <div id="cluster-info" style="display: none; margin-top: 3em;">
+            <p id="server-message"></p>
+
+            <p><strong>Your namespace:</strong> <span id="namespace">Not created</span></p>
+
+            <p>Your Kubeconfig:
+            <pre style="padding: 1ex; border; 2px solid grey; background: #dddddd"></pre>
+            </p>
           </div>
         </div>
       </div>
