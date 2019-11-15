@@ -128,6 +128,15 @@ app.post('/signin', async (req, res) => {
           ],
         },
       });
+      let eventView = k8sRbac.createNamespacedRoleBinding(k8sname, {
+        metadata: { name: 'event-viewer' },
+        roleRef: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'ClusterRole',
+          name: 'event-viewer',
+        },
+        subjects: [{ kind: 'ServiceAccount', name: 'default' }],
+      });
       await Promise.all([rq, role, ranger]);
     }
 
