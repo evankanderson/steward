@@ -137,7 +137,7 @@ app.post('/signin', async (req, res) => {
         },
         subjects: [{ kind: 'ServiceAccount', name: 'default' }],
       });
-      await Promise.all([rq, role, ranger]);
+      await Promise.all([rq, role, ranger, eventView]);
     }
 
     let certData = getCertData(kc.clusters[0]);
