@@ -129,6 +129,7 @@ get the OAuth to work elsewhere), and then do the following:
          - ''
        resources:
          - pods
+         - pods/list
        verbs:
          - get
          - list
@@ -137,7 +138,13 @@ get the OAuth to work elsewhere), and then do the following:
      - apiGroups:
          - eventing.knative.dev
        resources:
-         - trigger
+         - triggers
+       verbs:
+         - '*'
+     - apiGroups:
+         - sources.eventing.knative.dev
+       resources:
+         - apiserversource
        verbs:
          - '*'
    ---
