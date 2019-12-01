@@ -8,9 +8,8 @@ Login available. Once the user has logged in with Google login, it will
 provision a Namespace, ResourceQuota, LimitRanger, Broker and RoleBindings for
 that user, and then serve the user a custom KUBECONFIG file that includes the
 cluster information (including server keys), namespace, and GCP auth
-commandline. The user should be able to download or copy the file, set their
-KUBECONFIG to point to the local file, and then start using the shared cluster
-in their own namespace.
+commandline. The user
+
 
 ## Setup
 
@@ -30,10 +29,11 @@ get the OAuth to work elsewhere), and then do the following:
    OAuth2 Client ID here:
    https://console.cloud.google.com/apis/credentials?project=kubecon-knative-2019
 
-   Follow the instructions for
-   [web signin](https://developers.google.com/identity/sign-in/web/sign-in) and
-   [backend signin](https://developers.google.com/identity/sign-in/web/backend-auth)
-   for setting up the authorization credentials. In particular, you'll
+   Follow the instructions for [web
+   signin](https://developers.google.com/identity/sign-in/web/sign-in) and
+   [backend
+   signin](https://developers.google.com/identity/sign-in/web/backend-auth) for
+   setting up the authorization credentials. In particular, you'll
 
 1. Install Istio: https://knative.dev/docs/install/installing-istio/
 
@@ -95,6 +95,7 @@ get the OAuth to work elsewhere), and then do the following:
          - rbac.authorization.k8s.io
        resourceNames:
          - workshop-user
+	 - event-viewer
        resources:
          - clusterroles
        verbs:
@@ -128,7 +129,16 @@ get the OAuth to work elsewhere), and then do the following:
      - apiGroups:
          - ''
        resources:
+         - namespaces
+       verbs:
+         - get
+         - list
+         - watch
+     - apiGroups:
+         - ''
+       resources:
          - pods
+         - pods/list
        verbs:
          - get
          - list
@@ -137,7 +147,13 @@ get the OAuth to work elsewhere), and then do the following:
      - apiGroups:
          - eventing.knative.dev
        resources:
-         - trigger
+         - triggers
+       verbs:
+         - '*'
+     - apiGroups:
+         - sources.eventing.knative.dev
+       resources:
+         - apiserversources
        verbs:
          - '*'
    ---
@@ -225,9 +241,6 @@ get the OAuth to work elsewhere), and then do the following:
            # for details.
            uri: '/'
          route:
-           # Basically here we redirect the request to the cluster entry again with
-           # updated header "login-service.default.example.com" so the request will
-           # eventually be directed to LOgin service.
            - destination:
                host: kibana-logging.knative-monitoring.svc.cluster.local
                port:
@@ -235,16 +248,7 @@ get the OAuth to work elsewhere), and then do the following:
        - match:
            - uri:
                prefix: '/'
-         #    rewrite:
-         #      # Rewrite the original host header to the host header of Search service
-         #      # in order to redirect requests to Search service.
-         #      authority: search-service.default.example.com
          route:
-           # knative-ingressgateway is the k8s service created by Knative as the
-           # shared gateway of all traffic incoming to the cluster.
-           # Basically here we redirect the request to the cluster entry again with
-           # updated header "search-service.default.example.com" so the request will
-           # eventually be directed to Search service.
            - destination:
                host: grafana.knative-monitoring.svc.cluster.local
                port:
