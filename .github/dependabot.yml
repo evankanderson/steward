@@ -1,0 +1,15 @@
+version: 2
+updates:
+- package-ecosystem: "docker"
+  directories:
+  - /
+  schedule:
+    interval: "weekly"  # .schedule_interval
+  open-pull-requests-limit: 10
+
+- package-ecosystem: "npm"
+  directories:
+  - /
+  schedule:
+    interval: "weekly"  # .schedule_interval
+  open-pull-requests-limit: 10
