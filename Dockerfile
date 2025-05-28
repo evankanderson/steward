@@ -1,6 +1,6 @@
 # Use the official lightweight Node.js 12 image.
 # https://hub.docker.com/_/node
-FROM node:12-slim AS ts-builder
+FROM node:24-slim AS ts-builder
 
 # Create and change to the app directory.
 WORKDIR /usr/src/app
@@ -19,7 +19,7 @@ COPY . ./
 RUN [ "npm", "run-script", "compile" ]
 
 # Second stage build, to avoid shipping dev dependencies (80MB)
-FROM node:12-slim AS prod
+FROM node:24-slim AS prod
 
 WORKDIR /usr/src/app
 COPY package*.json ./
